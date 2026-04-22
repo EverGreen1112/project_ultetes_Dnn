@@ -1,0 +1,16 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable< Ultetes.Dnn.Project_Ultetes_Dnn.Models.Item >>
+
+@using System.Text.RegularExpressions
+@using DotNetNuke.Web.Mvc.Helpers
+
+
+<h1>CIGÁNY ok</h1>
+
+<div id="Items-@Dnn.ModuleContext.ModuleId">
+    @if (Model.Any())
+    {
+        <ul class="tm_tl">
+            
+        </ul>
+    }
+</div>
