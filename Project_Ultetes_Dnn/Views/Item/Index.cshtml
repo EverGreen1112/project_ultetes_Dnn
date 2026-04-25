@@ -1,41 +1,77 @@
 ﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable<Ultetes.Dnn.Project_Ultetes_Dnn.Models.ProductTypeViewModel>>
 @using System.Linq
+@using System.Collections.Generic
 
 <div class="project-ultetes-container">
-    <h2>Zöldség vetőmagok és típusaik</h2>
+    <h2>Zöldség vetőmagok (Vetés és Aratás naptár)</h2>
 
     @if (Model != null && Model.Any())
     {
-        @* Csoportosítjuk az elemeket típus szerint *@
         var groupedItems = Model.GroupBy(x => x.ProductTypeName).ToList();
+        var monthColors = ViewBag.MonthColors as Dictionary<string, int[]>;
 
-        <table style="width: 100%; max-width: 600px; border-collapse: collapse;" border="1" cellpadding="8">
+        <table style="width: 100%; border-collapse: collapse;" border="1">
             <thead>
-                
+                <tr style="background-color: #f2f2f2; text-align: center;">
+                    <th style="text-align: left; padding: 8px; width: 30%;">Terméktípus (Kiválasztó)</th>
+                    @* A 12 hónap fejléce (3 betűs rövidítésekkel) *@
+                    <th style="padding: 8px;" title="Január">Jan</th>
+                    <th style="padding: 8px;" title="Február">Feb</th>
+                    <th style="padding: 8px;" title="Március">Már</th>
+                    <th style="padding: 8px;" title="Április">Ápr</th>
+                    <th style="padding: 8px;" title="Május">Máj</th>
+                    <th style="padding: 8px;" title="Június">Jún</th>
+                    <th style="padding: 8px;" title="Július">Júl</th>
+                    <th style="padding: 8px;" title="Augusztus">Aug</th>
+                    <th style="padding: 8px;" title="Szeptember">Sze</th>
+                    <th style="padding: 8px;" title="Október">Okt</th>
+                    <th style="padding: 8px;" title="November">Nov</th>
+                    <th style="padding: 8px;" title="December">Dec</th>
+                </tr>
             </thead>
             <tbody>
                 @foreach (var group in groupedItems)
                 {
                     <tr>
-                        <td>
-                            @* A Combo Box (legördülő menü) *@
+                        <td style="padding: 5px;">
                             <select style="width: 100%; padding: 6px; font-size: 14px; cursor: pointer;">
-
-                                @* 1. Alapértelmezett, csukott állapot: a Típus neve *@
                                 <option value="" selected>@group.Key (@group.Count() db)</option>
-
-                                @* 2. Lenyitott állapot: a Típushoz tartozó termékek *@
                                 @foreach (var product in group)
                                 {
                                     <option value="@product.ProductName">-- @product.ProductName</option>
                                 }
-
                             </select>
                         </td>
+
+                        @{
+                            int[] months = (monthColors != null && monthColors.ContainsKey(group.Key))
+                                            ? monthColors[group.Key]
+                                            : new int[12];
+                        }
+
+                        @for (int i = 0; i < 12; i++)
+                        {
+                            string bgColor = "transparent";
+                            if (months[i] == 1) { bgColor = "#f39c12"; } // Narancs (Vetés)
+                            else if (months[i] == 2) { bgColor = "#3498db"; } // Kék (Aratás)
+                            else if (months[i] == 3) { bgColor = "#2ecc71"; } // Zöld (Mindkettő)
+
+                            @* Közvetlenül a cella kapja a háttérszínt *@
+                            <td style="background-color: @bgColor; padding: 0; min-width: 35px; height: 40px; text-align: center;">
+                                @* Üresen hagyjuk, a háttérszín kitölti a cellát *@
+                            </td>
+                        }
                     </tr>
                 }
             </tbody>
         </table>
+
+        <div style="margin-top: 15px; font-size: 14px;">
+            <strong>Jelmagyarázat:</strong>
+            <span style="display:inline-block; width:15px; height:15px; background-color:#f39c12; margin-left:15px; vertical-align: middle;"></span> Vetés
+            <span style="display:inline-block; width:15px; height:15px; background-color:#3498db; margin-left:15px; vertical-align: middle;"></span> Aratás
+            <span style="display:inline-block; width:15px; height:15px; background-color:#2ecc71; margin-left:15px; vertical-align: middle;"></span> Vetés és Aratás
+        </div>
     }
     else
     {

@@ -6,6 +6,7 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Models
     // mert csak egy egyedi SQL lekérdezés eredményét fogja tárolni.
     public class ProductTypeViewModel
     {
+        public string ProductTypeId { get; set; }
         public string ProductName { get; set; }
         public string ProductTypeName { get; set; }
     }

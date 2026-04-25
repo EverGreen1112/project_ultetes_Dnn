@@ -111,6 +111,7 @@
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Models\ProductTypeViewModel.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\TypePropertyDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
