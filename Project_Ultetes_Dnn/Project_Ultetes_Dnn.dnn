@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Project_Ultetes_Dnn" type="Module" version="00.00.06">
+    <package name="Project_Ultetes_Dnn" type="Module" version="00.00.07">
       <friendlyName>Project_Ultetes_Dnn</friendlyName>
       <description>Project_Ultetes_Dnn</description>
       <iconFile>~/Icons/Sigma/Software_32X32_Standard.png</iconFile>

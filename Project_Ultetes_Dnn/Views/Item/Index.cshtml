@@ -3,78 +3,97 @@
 @using System.Collections.Generic
 
 <div class="project-ultetes-container">
-    <h2>Zöldség vetőmagok (Vetés és Aratás naptár)</h2>
+    @* GOMBSOR *@
+    <div class="category-buttons" style="margin-bottom: 20px;">
+        <button type="button" class="nav-btn active" onclick="switchTab('Zoldseg', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Zöldség vetőmag</button>
+        <button type="button" class="nav-btn" onclick="switchTab('Virag', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Virág vetőmag</button>
+        <button type="button" class="nav-btn" onclick="switchTab('Hagyma', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Hagymák, gumók</button>
+    </div>
 
-    @if (Model != null && Model.Any())
-    {
-        var groupedItems = Model.GroupBy(x => x.ProductTypeName).ToList();
+    @{
         var monthColors = ViewBag.MonthColors as Dictionary<string, int[]>;
+        string[] groupKeys = { "Zoldseg", "Virag", "Hagyma" };
+    }
 
-        <table style="width: 100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr style="background-color: #f2f2f2; text-align: center;">
-                    <th style="text-align: left; padding: 8px; width: 30%;">Terméktípus (Kiválasztó)</th>
-                    @* A 12 hónap fejléce (3 betűs rövidítésekkel) *@
-                    <th style="padding: 8px;" title="Január">Jan</th>
-                    <th style="padding: 8px;" title="Február">Feb</th>
-                    <th style="padding: 8px;" title="Március">Már</th>
-                    <th style="padding: 8px;" title="Április">Ápr</th>
-                    <th style="padding: 8px;" title="Május">Máj</th>
-                    <th style="padding: 8px;" title="Június">Jún</th>
-                    <th style="padding: 8px;" title="Július">Júl</th>
-                    <th style="padding: 8px;" title="Augusztus">Aug</th>
-                    <th style="padding: 8px;" title="Szeptember">Sze</th>
-                    <th style="padding: 8px;" title="Október">Okt</th>
-                    <th style="padding: 8px;" title="November">Nov</th>
-                    <th style="padding: 8px;" title="December">Dec</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var group in groupedItems)
-                {
-                    <tr>
-                        <td style="padding: 5px;">
-                            <select style="width: 100%; padding: 6px; font-size: 14px; cursor: pointer;">
-                                <option value="" selected>@group.Key (@group.Count() db)</option>
-                                @foreach (var product in group)
-                                {
-                                    <option value="@product.ProductName">-- @product.ProductName</option>
-                                }
-                            </select>
-                        </td>
-
-                        @{
-                            int[] months = (monthColors != null && monthColors.ContainsKey(group.Key))
-                                            ? monthColors[group.Key]
-                                            : new int[12];
-                        }
-
-                        @for (int i = 0; i < 12; i++)
-                        {
-                            string bgColor = "transparent";
-                            if (months[i] == 1) { bgColor = "#f39c12"; } // Narancs (Vetés)
-                            else if (months[i] == 2) { bgColor = "#3498db"; } // Kék (Aratás)
-                            else if (months[i] == 3) { bgColor = "#2ecc71"; } // Zöld (Mindkettő)
-
-                            @* Közvetlenül a cella kapja a háttérszínt *@
-                            <td style="background-color: @bgColor; padding: 0; min-width: 35px; height: 40px; text-align: center;">
-                                @* Üresen hagyjuk, a háttérszín kitölti a cellát *@
-                            </td>
-                        }
+    @foreach (var key in groupKeys)
+    {
+        @* Minden kategóriának saját táblázat-tárolója van. Alapból csak a Zoldseg látszik. *@
+        <div id="tab-@key" class="tab-content" style="@(key == "Zoldseg" ? "" : "display:none;")">
+            <table style="width: 100%; border-collapse: collapse;" border="1">
+                <thead>
+                    <tr style="background-color: #f2f2f2; text-align: center;">
+                        <th style="text-align: left; padding: 8px; width: 30%;">Típus (@key)</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Már</th>
+                        <th>Ápr</th>
+                        <th>Máj</th>
+                        <th>Jún</th>
+                        <th>Júl</th>
+                        <th>Aug</th>
+                        <th>Sze</th>
+                        <th>Okt</th>
+                        <th>Nov</th>
+                        <th>Dec</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @{
+                        var groupData = Model.Where(x => x.CategoryGroup == key).GroupBy(x => x.ProductTypeName).ToList();
+                    }
+                    @foreach (var group in groupData)
+                    {
+                        <tr>
+                            <td style="padding: 5px;">
+                                <select style="width: 100%; padding: 6px; font-size: 14px;">
+                                    <option value="" selected>@group.Key (@group.Count() db)</option>
+                                    @foreach (var p in group)
+                                    {
+                                        <option>-- @p.ProductName</option>
+                                    }
+                                </select>
+                            </td>
+                            @{ int[] months = monthColors.ContainsKey(group.Key) ? monthColors[group.Key] : new int[12]; }
+                            @for (int i = 0; i < 12; i++)
+                            {
+                                string bgColor = "transparent";
 
-        <div style="margin-top: 15px; font-size: 14px;">
-            <strong>Jelmagyarázat:</strong>
-            <span style="display:inline-block; width:15px; height:15px; background-color:#f39c12; margin-left:15px; vertical-align: middle;"></span> Vetés
-            <span style="display:inline-block; width:15px; height:15px; background-color:#3498db; margin-left:15px; vertical-align: middle;"></span> Aratás
-            <span style="display:inline-block; width:15px; height:15px; background-color:#2ecc71; margin-left:15px; vertical-align: middle;"></span> Vetés és Aratás
+                                if (months[i] == 1) { bgColor = "#f39c12"; }
+                                else if (months[i] == 2) { bgColor = "#3498db"; }
+                                else if (months[i] == 3) { bgColor = "#2ecc71"; }
+
+                                <td style="background-color: @bgColor; height: 40px; min-width: 35px;"></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
-    else
-    {
-        <p>Nincsenek a feltételnek megfelelő adatok az adatbázisban.</p>
-    }
+
+    @* JELMAGYARÁZAT *@
+    <div style="margin-top: 15px; font-size: 14px;">
+        <strong>Jelmagyarázat:</strong>
+        <span style="display:inline-block; width:15px; height:15px; background-color:#f39c12; margin-left:15px; vertical-align: middle;"></span> Vetés
+        <span style="display:inline-block; width:15px; height:15px; background-color:#3498db; margin-left:15px; vertical-align: middle;"></span> Aratás
+        <span style="display:inline-block; width:15px; height:15px; background-color:#2ecc71; margin-left:15px; vertical-align: middle;"></span> Mindkettő
+    </div>
+
+    @* VÁLTÓ SCRIPT *@
+    <script type="text/javascript">
+        function switchTab(tabId, btn) {
+            // Összes tábla elrejtése
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            // Választott tábla megjelenítése
+            document.getElementById('tab-' + tabId).style.display = 'block';
+
+            // Gombok stílusának frissítése
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.style.background = '#eee';
+                b.style.fontWeight = 'normal';
+            });
+            btn.style.background = '#ccc';
+            btn.style.fontWeight = 'bold';
+        }
+    </script>
 </div>

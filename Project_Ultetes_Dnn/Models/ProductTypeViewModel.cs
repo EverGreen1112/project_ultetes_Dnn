@@ -9,5 +9,6 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Models
         public string ProductTypeId { get; set; }
         public string ProductName { get; set; }
         public string ProductTypeName { get; set; }
+        public string CategoryGroup { get; set; }
     }
 }  
