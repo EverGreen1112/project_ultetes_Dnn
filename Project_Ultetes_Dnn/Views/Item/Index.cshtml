@@ -4,10 +4,10 @@
 
 <div class="project-ultetes-container">
     @* GOMBSOR *@
-    <div class="category-buttons" style="margin-bottom: 20px;">
-        <button type="button" class="nav-btn active" onclick="switchTab('Zoldseg', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Zöldség vetőmag</button>
-        <button type="button" class="nav-btn" onclick="switchTab('Virag', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Virág vetőmag</button>
-        <button type="button" class="nav-btn" onclick="switchTab('Hagyma', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Hagymák, gumók</button>
+    <div class="ultetes-category-buttons" style="margin-bottom: 20px;">
+        <button type="button" class="ultetes-nav-btn active" onclick="switchTab('Zoldseg', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Zöldség vetőmag</button>
+        <button type="button" class="ultetes-nav-btn" onclick="switchTab('Virag', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Virág vetőmag</button>
+        <button type="button" class="ultetes-nav-btn" onclick="switchTab('Hagyma', this)" style="padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background: #eee;">Hagymák, gumók</button>
     </div>
 
     @{
@@ -17,23 +17,23 @@
 
     @foreach (var key in groupKeys)
     {
-        <div id="tab-@key" class="tab-content" style="@(key == "Zoldseg" ? "" : "display:none;")">
-            <table style="width: 100%; border-collapse: collapse;" border="1">
+        <div id="tab-@key" class="ultetes-tab-content" style='@(key == "Zoldseg" ? "" : "display:none;")'>
+            <table class="ultetes-calendar-table" style="width: 100%; border-collapse: collapse;" border="1">
                 <thead>
-                    <tr style="background-color: #f2f2f2; text-align: center;">
-                        <th style="text-align: left; padding: 8px; width: 35%;">Típus (@key)</th>
-                        <th>Jan</th>
-                        <th>Feb</th>
-                        <th>Már</th>
-                        <th>Ápr</th>
-                        <th>Máj</th>
-                        <th>Jún</th>
-                        <th>Júl</th>
-                        <th>Aug</th>
-                        <th>Sze</th>
-                        <th>Okt</th>
-                        <th>Nov</th>
-                        <th>Dec</th>
+                    <tr class="ultetes-table-header" style="background-color: #f2f2f2; text-align: center;">
+                        <th class="ultetes-type-col" style="text-align: left; padding: 8px; width: 35%;">Típus (@key)</th>
+                        <th class="ultetes-month-col">Jan</th>
+                        <th class="ultetes-month-col">Feb</th>
+                        <th class="ultetes-month-col">Már</th>
+                        <th class="ultetes-month-col">Ápr</th>
+                        <th class="ultetes-month-col">Máj</th>
+                        <th class="ultetes-month-col">Jún</th>
+                        <th class="ultetes-month-col">Júl</th>
+                        <th class="ultetes-month-col">Aug</th>
+                        <th class="ultetes-month-col">Sze</th>
+                        <th class="ultetes-month-col">Okt</th>
+                        <th class="ultetes-month-col">Nov</th>
+                        <th class="ultetes-month-col">Dec</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,32 +43,24 @@
                     @foreach (var group in groupData)
                     {
                         <tr>
-                            <td style="padding: 5px;">
-                                @* ÚJ ELRENDEZÉS: Gomb és select egymás mellett *@
-                                <div style="display: flex; align-items: center; gap: 8px;">
+                            <td class="ultetes-control-cell" style="padding: 5px;">
+                                <div class="ultetes-control-wrapper" style="display: flex; align-items: center; gap: 8px;">
 
-                                    @* A Gomb: Fix 32x32 px helyet foglal el. Alapból rejtve van (visibility: hidden) *@
-                                    <div style="width: 32px; height: 32px; flex-shrink: 0;">
-                                        <a class="product-link-btn" href="#" target="_blank" title="Ugrás a termékoldalra"
+                                    @* A Gomb *@
+                                    <div class="ultetes-btn-wrapper" style="width: 32px; height: 32px; flex-shrink: 0;">
+                                        <a class="ultetes-product-link" href="#" target="_blank" title="Ugrás a termékoldalra"
                                            style="visibility: hidden; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background-color: #3498db; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                                            &#10138;
+                                            🔎
                                         </a>
                                     </div>
 
                                     @* A Select Box *@
-                                    <select style="flex-grow: 1; padding: 6px; font-size: 14px; cursor: pointer;" onchange="updateProductLink(this)">
-
-                                        @* 1. Ez az alapértelmezett, csukott állapot (Itt a 'group'-ot használjuk, nem a 'p'-t) *@
+                                    <select class="ultetes-select" style="flex-grow: 1; padding: 6px; font-size: 14px; cursor: pointer;" onchange="updateProductLink(this)">
                                         <option value="" selected>@group.Key (@group.Count() db)</option>
-
-                                        @* 2. Ez a ciklus, ami betölti a termékeket *@
                                         @foreach (var p in group)
                                         {
-                                            @* Itt belül már ismeri a 'p'-t! *@
                                             <option value="@p.UrlSlug">-- @p.ProductName</option>
-
                                         }
-
                                     </select>
 
                                 </div>
@@ -77,10 +69,13 @@
                             @for (int i = 0; i < 12; i++)
                             {
                                 string bgColor = "transparent";
-                                if (months[i] == 1) { bgColor = "#f39c12"; }
-                                else if (months[i] == 2) { bgColor = "#3498db"; }
-                                else if (months[i] == 3) { bgColor = "#2ecc71"; }
-                                <td style="background-color: @bgColor; height: 40px; min-width: 35px;"></td>
+                                string statusClass = "status-ures";
+
+                                if (months[i] == 1) { bgColor = "#f39c12"; statusClass = "status-vetes"; }
+                                else if (months[i] == 2) { bgColor = "#3498db"; statusClass = "status-aratas"; }
+                                else if (months[i] == 3) { bgColor = "#2ecc71"; statusClass = "status-mindketto"; }
+
+                                <td class="ultetes-calendar-cell @statusClass" style="background-color: @bgColor; height: 40px; min-width: 35px;"></td>
                             }
                         </tr>
                     }
@@ -90,37 +85,35 @@
     }
 
     @* JELMAGYARÁZAT *@
-    <div style="margin-top: 15px; font-size: 14px;">
-        <strong>Jelmagyarázat:</strong>
-        <span style="display:inline-block; width:15px; height:15px; background-color:#f39c12; margin-left:15px; vertical-align: middle;"></span> Vetés
-        <span style="display:inline-block; width:15px; height:15px; background-color:#3498db; margin-left:15px; vertical-align: middle;"></span> Aratás
-        <span style="display:inline-block; width:15px; height:15px; background-color:#2ecc71; margin-left:15px; vertical-align: middle;"></span> Mindkettő
+    <div class="ultetes-legend" style="margin-top: 15px; font-size: 14px;">
+        <strong class="ultetes-legend-title">Jelmagyarázat:</strong>
+        <span class="ultetes-legend-item"><span class="ultetes-legend-color status-vetes" style="display:inline-block; width:15px; height:15px; background-color:#f39c12; margin-left:15px; vertical-align: middle;"></span> Vetés</span>
+        <span class="ultetes-legend-item"><span class="ultetes-legend-color status-aratas" style="display:inline-block; width:15px; height:15px; background-color:#3498db; margin-left:15px; vertical-align: middle;"></span> Aratás</span>
+        <span class="ultetes-legend-item"><span class="ultetes-legend-color status-mindketto" style="display:inline-block; width:15px; height:15px; background-color:#2ecc71; margin-left:15px; vertical-align: middle;"></span> Mindkettő</span>
     </div>
 
     @* JAVASCRIPT A VÁLTÁSHOZ ÉS A GOMBHOZ *@
     <script type="text/javascript">
-        // Fül váltó script (maradt a régi)
         function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(function (t) { t.style.display = 'none'; });
+            document.querySelectorAll('.ultetes-tab-content').forEach(function (t) { t.style.display = 'none'; });
             document.getElementById('tab-' + tabId).style.display = 'block';
 
-            document.querySelectorAll('.nav-btn').forEach(function (b) {
+            document.querySelectorAll('.ultetes-nav-btn').forEach(function (b) {
                 b.style.background = '#eee';
                 b.style.fontWeight = 'normal';
+                b.classList.remove('active');
             });
             btn.style.background = '#ccc';
             btn.style.fontWeight = 'bold';
+            btn.classList.add('active');
         }
 
-        // ÚJ: Ez a függvény aktiválja a gombot
         function updateProductLink(selectElem) {
-            var btn = selectElem.parentElement.querySelector('.product-link-btn');
+            var btn = selectElem.parentElement.querySelector('.ultetes-product-link');
             var selectedSlug = selectElem.value;
 
             if (selectedSlug) {
-                // Pontosan a te link-struktúrád alapján összerakva!
                 btn.href = "/Részletek/" + selectedSlug;
-
                 btn.style.visibility = "visible";
             } else {
                 btn.style.visibility = "hidden";
