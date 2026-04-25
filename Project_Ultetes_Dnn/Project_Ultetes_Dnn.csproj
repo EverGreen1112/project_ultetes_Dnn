@@ -106,6 +106,7 @@
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Components\ItemManager.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Models\ProductRawDTO.cs" />
     <Compile Include="Models\ProductType.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Controllers\ItemController.cs" />

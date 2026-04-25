@@ -86,25 +86,27 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
 
             using (IDataContext ctx = DataContext.Instance())
             {
-                // 1. Kibővített SQL: minden kategóriát lekérünk, ami a 3 gombhoz kell
+                // Kibővített SQL: lekérjük a p.bvin-t is!
                 string sqlProducts = @"
-            SELECT 
-                CAST(p.ProductTypeId AS NVARCHAR(50)) AS ProductTypeId,
-                pt.ProductName, 
-                ptt.ProductTypeName,
-                ct.Name as CategoryName
-            FROM hcc_Product p
-            INNER JOIN hcc_ProductXCategory pxc ON p.bvin = pxc.ProductId
-            INNER JOIN hcc_CategoryTranslations ct ON pxc.CategoryId = ct.CategoryId
-            INNER JOIN hcc_ProductTranslations pt ON p.bvin = pt.ProductId
-            INNER JOIN hcc_ProductTypeTranslations ptt 
-                ON CAST(p.ProductTypeId AS NVARCHAR(50)) = CAST(ptt.ProductTypeId AS NVARCHAR(50))
-            WHERE 
-                ct.Name IN (N'Zöldség vetőmag', N'Virág vetőmag', N'Prémium vetőmag', N'Hagymák, gumók')
-                AND p.ProductTypeId IS NOT NULL
-        ";
+                    SELECT 
+                        CAST(p.ProductTypeId AS NVARCHAR(50)) AS ProductTypeId,
+                        CAST(p.bvin AS NVARCHAR(50)) AS ProductBvin,
+                        p.RewriteUrl AS UrlSlug, 
+                        pt.ProductName, 
+                        ptt.ProductTypeName,
+                        ct.Name as CategoryName
+                    FROM hcc_Product p
+                    INNER JOIN hcc_ProductXCategory pxc ON p.bvin = pxc.ProductId
+                    INNER JOIN hcc_CategoryTranslations ct ON pxc.CategoryId = ct.CategoryId
+                    INNER JOIN hcc_ProductTranslations pt ON p.bvin = pt.ProductId
+                    INNER JOIN hcc_ProductTypeTranslations ptt 
+                        ON CAST(p.ProductTypeId AS NVARCHAR(50)) = CAST(ptt.ProductTypeId AS NVARCHAR(50))
+                    WHERE 
+                        ct.Name IN (N'Zöldség vetőmag', N'Virág vetőmag', N'Prémium vetőmag', N'Hagymák, gumók')
+                        AND p.ProductTypeId IS NOT NULL
+                ";
 
-                var rawData = ctx.ExecuteQuery<dynamic>(System.Data.CommandType.Text, sqlProducts);
+                var rawData = ctx.ExecuteQuery<ProductRawDTO>(System.Data.CommandType.Text, sqlProducts);
 
                 foreach (var item in rawData)
                 {
@@ -115,9 +117,10 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
                     else if (catName == "Virág vetőmag" || catName == "Prémium vetőmag") group = "Virag";
                     else if (catName == "Hagymák, gumók") group = "Hagyma";
 
-                    products.Add(new ProductTypeViewModel
-                    {
+                    products.Add(new ProductTypeViewModel {
                         ProductTypeId = item.ProductTypeId,
+                        ProductBvin = item.ProductBvin,
+                        UrlSlug = item.UrlSlug, // <--- ITT MENTJÜK EL A SZÉP LINKET!
                         ProductName = item.ProductName,
                         ProductTypeName = item.ProductTypeName,
                         CategoryGroup = group
