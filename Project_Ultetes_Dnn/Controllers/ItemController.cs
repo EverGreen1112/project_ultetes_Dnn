@@ -9,7 +9,8 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
-
+using DotNetNuke.Data;
+using System.Collections.Generic;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Web.Mvc.Framework.ActionFilters;
@@ -80,8 +81,36 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
         [ModuleAction(ControlKey = "Edit", TitleKey = "AddItem")]
         public ActionResult Index()
         {
-            var items = ItemManager.Instance.GetItems(ModuleContext.ModuleId);
-            return View(items);
+            IEnumerable<ProductTypeViewModel> products;
+
+            // Kapcsolódunk a DNN adatbázisához
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                // A komplex SQL lekérdezés felépítése
+                string sql = @"
+    SELECT 
+        pt.ProductName, 
+        ptt.ProductTypeName
+    FROM hcc_Product p
+    INNER JOIN hcc_ProductXCategory pxc ON p.bvin = pxc.ProductId
+    INNER JOIN hcc_CategoryTranslations ct ON pxc.CategoryId = ct.CategoryId
+    INNER JOIN hcc_ProductTranslations pt ON p.bvin = pt.ProductId
+    INNER JOIN hcc_ProductTypeTranslations ptt 
+        ON CAST(p.ProductTypeId AS NVARCHAR(50)) = CAST(ptt.ProductTypeId AS NVARCHAR(50))
+    WHERE 
+        ct.Name = N'Zöldség vetőmag' 
+        AND p.ProductTypeId IS NOT NULL
+    ORDER BY 
+        ptt.ProductTypeName ASC, 
+        pt.ProductName ASC
+";
+
+                // Futtatjuk a nyers SQL-t, és az eredményt betöltjük a ViewModel-ünkbe
+                products = ctx.ExecuteQuery<ProductTypeViewModel>(System.Data.CommandType.Text, sql);
+            }
+
+            // Átküldjük a listát a View-nak
+            return View(products);
         }
     }
 }

@@ -1,16 +1,44 @@
-﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable< Ultetes.Dnn.Project_Ultetes_Dnn.Models.Item >>
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable<Ultetes.Dnn.Project_Ultetes_Dnn.Models.ProductTypeViewModel>>
+@using System.Linq
 
-@using System.Text.RegularExpressions
-@using DotNetNuke.Web.Mvc.Helpers
+<div class="project-ultetes-container">
+    <h2>Zöldség vetőmagok és típusaik</h2>
 
-
-<h1>verzióteszt3</h1>
-
-<div id="Items-@Dnn.ModuleContext.ModuleId">
-    @if (Model.Any())
+    @if (Model != null && Model.Any())
     {
-        <ul class="tm_tl">
-            
-        </ul>
+        @* Csoportosítjuk az elemeket típus szerint *@
+        var groupedItems = Model.GroupBy(x => x.ProductTypeName).ToList();
+
+        <table style="width: 100%; max-width: 600px; border-collapse: collapse;" border="1" cellpadding="8">
+            <thead>
+                
+            </thead>
+            <tbody>
+                @foreach (var group in groupedItems)
+                {
+                    <tr>
+                        <td>
+                            @* A Combo Box (legördülő menü) *@
+                            <select style="width: 100%; padding: 6px; font-size: 14px; cursor: pointer;">
+
+                                @* 1. Alapértelmezett, csukott állapot: a Típus neve *@
+                                <option value="" selected>@group.Key (@group.Count() db)</option>
+
+                                @* 2. Lenyitott állapot: a Típushoz tartozó termékek *@
+                                @foreach (var product in group)
+                                {
+                                    <option value="@product.ProductName">-- @product.ProductName</option>
+                                }
+
+                            </select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Nincsenek a feltételnek megfelelő adatok az adatbázisban.</p>
     }
 </div>
