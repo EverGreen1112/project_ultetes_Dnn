@@ -102,7 +102,7 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
                     INNER JOIN hcc_ProductTypeTranslations ptt 
                         ON CAST(p.ProductTypeId AS NVARCHAR(50)) = CAST(ptt.ProductTypeId AS NVARCHAR(50))
                     WHERE 
-                        ct.Name IN (N'Zöldség vetőmag', N'Virág vetőmag', N'Prémium vetőmag', N'Hagymák, gumók')
+                        ct.Name IN (N'Zöldség vetőmag', N'Virág vetőmag', N'Prémium vetőmagok', N'Hagymák, gumók')
                         AND p.ProductTypeId IS NOT NULL
                 ";
 
@@ -114,7 +114,7 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
                     string catName = item.CategoryName;
 
                     if (catName == "Zöldség vetőmag") group = "Zoldseg";
-                    else if (catName == "Virág vetőmag" || catName == "Prémium vetőmag") group = "Virag";
+                    else if (catName == "Virág vetőmag" || catName == "Prémium vetőmagok") group = "Virag";
                     else if (catName == "Hagymák, gumók") group = "Hagyma";
 
                     products.Add(new ProductTypeViewModel {
