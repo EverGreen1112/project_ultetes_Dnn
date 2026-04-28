@@ -135,27 +135,8 @@ namespace Ultetes.Dnn.Project_Ultetes_Dnn.Controllers
                 typeProperties = ctx.ExecuteQuery<TypePropertyDTO>(System.Data.CommandType.Text, sqlProps).ToList();
             }
 
-            // 3. Naptár mátrix összeállítása (marad a régi logika)
-            var monthColors = new Dictionary<string, int[]>();
-            foreach (var p in products)
-            {
-                if (!monthColors.ContainsKey(p.ProductTypeName))
-                {
-                    int[] months = new int[12];
-                    var propsForThisType = typeProperties.Where(t => t.ProductTypeId == p.ProductTypeId).ToList();
-                    foreach (var prop in propsForThisType)
-                    {
-                        var parts = prop.PropertyName.Split('_');
-                        if (parts.Length >= 2 && int.TryParse(parts[1], out int mIdx))
-                        {
-                            mIdx -= 1;
-                            if (parts[0] == "vetes") months[mIdx] |= 1;
-                            else if (parts[0] == "aratas") months[mIdx] |= 2;
-                        }
-                    }
-                    monthColors.Add(p.ProductTypeName, months);
-                }
-            }
+            var calculator = new CalendarCalculator();
+            var monthColors = calculator.CalculateMonthColors(products, typeProperties);
 
             ViewBag.MonthColors = monthColors;
             return View(products);
